@@ -1,5 +1,15 @@
 #!/bin/bash
 
+INFO="
+##### lsb_release #####
+$(lsb_release -a 2>/dev/null)
+
+##### hostnamectl #####
+$(hostnamectl 2>/dev/null)
+"
+
+echo "$INFO"
+
 # Download EarnApp installation script
 wget -qO- https://brightdata.com/static/earnapp/install.sh > /app/setup.sh
 
