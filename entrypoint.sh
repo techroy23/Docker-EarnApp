@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "### ### ### ### ###"
+echo " Starting up ... "
+echo "### ### ### ### ###"
+
 # Check if EARNAPP_UUID is set and not empty
 if [[ -z "$EARNAPP_UUID" ]]; then
     echo " "
@@ -7,12 +11,13 @@ if [[ -z "$EARNAPP_UUID" ]]; then
     echo "Run the following command to generate one:"
     echo " "
     echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
-    echo "echo -n "sdk-node-" && head -c 1024 /dev/urandom | md5sum | tr -d ' -'"
+    echo " echo -n "sdk-node-" && head -c 1024 /dev/urandom | md5sum | tr -d ' -' "
     echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
     echo " "
     exit 255
 fi
 
+echo " "
 INFO="
 ##### lsb_release #####
 $(lsb_release -a 2>/dev/null)
@@ -22,46 +27,54 @@ $(hostnamectl 2>/dev/null)
 "
 
 echo "$INFO"
+echo " "
 
-# Download EarnApp installation script
+echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
+echo " Downloading  EarnApp installation script to get the latest version of the binary ... "
+echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
 wget -qO- https://brightdata.com/static/earnapp/install.sh > /app/setup.sh
-
-# Detect system architecture and extract version information
 ARCH=$(uname -m)
 VERSION=$(grep VERSION= /app/setup.sh | cut -d'"' -f2)
+echo "Found version $VERSION"
 
-# Define filename based on architecture
 case $ARCH in
     x86_64|amd64) filename="earnapp-x64-$VERSION" ;;
     armv7l|armv6l) filename="earnapp-arm7l-$VERSION" ;;
     aarch64|arm64) filename="earnapp-aarch64-$VERSION" ;;
     *) filename="$PRODUCT-arm7l-$VERSION" ;;  # Default fallback
 esac
+echo " "
 
-# Download EarnApp binary
+echo "### ### ### ### ### ### ###"
+echo " Download EarnApp binary "
+echo "### ### ### ### ### ### ###"
 wget --no-check-certificate --progress=bar:force:noscroll "https://cdn-earnapp.b-cdn.net/static/$filename" -O /usr/bin/earnapp
+echo " "
 
-
-# Prepare configuration directory and status file
+echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
+echo " Setting up directory, status file, UUID and permissions ... "
+echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
 mkdir -p /etc/earnapp
 touch /etc/earnapp/status
-
-# Store the EarnApp UUID
 echo "$EARNAPP_UUID" > /etc/earnapp/uuid
-
-# Set appropriate permissions
 chmod -R a+rwx /etc/earnapp
 chmod -R a+rwx /usr/bin/earnapp
+echo " "
 
-# Start EarnApp service and register instance
+echo "### ### ### ### ### ### ### ### ### ### ### ###"
+echo " Start EarnApp service and register instance "
+echo "### ### ### ### ### ### ### ### ### ### ### ###"
 sleep 3
 /usr/bin/earnapp start &
 sleep 3
 /usr/bin/earnapp status &
 sleep 3
 /usr/bin/earnapp register &
+echo " "
 
-# Keep the script running indefinitely
 sleep 10
-echo "##### Running Indefinitely #####"
+echo "### ### ### ### ### ###"
+echo " Running Indefinitely "
+echo "### ### ### ### ### ###"
 tail -f /dev/null
+echo " "
