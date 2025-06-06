@@ -2,9 +2,14 @@
 
 # Check if EARNAPP_UUID is set and not empty
 if [[ -z "$EARNAPP_UUID" ]]; then
+    echo " "
     echo "Error: EARNAPP_UUID is missing or empty."
     echo "Run the following command to generate one:"
+    echo " "
+    echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
     echo "echo -n "sdk-node-" && head -c 1024 /dev/urandom | md5sum | tr -d ' -'"
+    echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
+    echo " "
     exit 255
 fi
 
@@ -34,7 +39,8 @@ case $ARCH in
 esac
 
 # Download EarnApp binary
-wget --no-check-certificate https://cdn-earnapp.b-cdn.net/static/$filename -O /usr/bin/earnapp
+wget --no-check-certificate --progress=bar:force:noscroll "https://cdn-earnapp.b-cdn.net/static/$filename" -O /usr/bin/earnapp
+
 
 # Prepare configuration directory and status file
 mkdir -p /etc/earnapp
