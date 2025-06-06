@@ -76,12 +76,16 @@ echo " "
 
 sleep 3
 /usr/bin/earnapp register &
-echo " "
-echo " "
 
 sleep 10
+echo " "
+echo " "
+echo " "
+echo " "
+echo " "
 echo "### ### ### ### ### ###"
 echo " Running Indefinitely "
 echo "### ### ### ### ### ###"
 tail -f /dev/null
+echo " "
 echo " "
