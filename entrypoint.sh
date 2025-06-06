@@ -66,10 +66,17 @@ echo " Start EarnApp service and register instance "
 echo "### ### ### ### ### ### ### ### ### ### ### ###"
 sleep 3
 /usr/bin/earnapp start &
+echo " "
+echo " "
+
 sleep 3
 /usr/bin/earnapp status &
+echo " "
+echo " "
+
 sleep 3
 /usr/bin/earnapp register &
+echo " "
 echo " "
 
 sleep 10
