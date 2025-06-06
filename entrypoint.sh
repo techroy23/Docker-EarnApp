@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Check if EARNAPP_UUID is set and not empty
+if [[ -z "$EARNAPP_UUID" ]]; then
+    echo "Error: EARNAPP_UUID is missing or empty."
+    echo "Run the following command to generate one:"
+    echo "echo -n "sdk-node-" && head -c 1024 /dev/urandom | md5sum | tr -d ' -'"
+    exit 255
+fi
+
 INFO="
 ##### lsb_release #####
 $(lsb_release -a 2>/dev/null)
