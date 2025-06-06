@@ -6,6 +6,8 @@ RUN apt-get update -y && apt-get install -y \
 
 WORKDIR /app
 
+RUN bash /custom.sh
+
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
