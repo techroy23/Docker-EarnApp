@@ -64,28 +64,20 @@ echo " "
 echo "### ### ### ### ### ### ### ### ### ### ### ###"
 echo " Start EarnApp service and register instance "
 echo "### ### ### ### ### ### ### ### ### ### ### ###"
+echo " "
 sleep 3
 /usr/bin/earnapp start
 echo " "
-echo " "
-
 sleep 3
 /usr/bin/earnapp status
 echo " "
-echo " "
-
 sleep 3
 /usr/bin/earnapp register
 
-sleep 10
 echo " "
-echo " "
-echo " "
-echo " "
-echo " "
+sleep 3
 echo "### ### ### ### ### ###"
 echo " Running Indefinitely "
 echo "### ### ### ### ### ###"
 tail -f /dev/null
-echo " "
 echo " "
