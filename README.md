@@ -1,7 +1,7 @@
 # Docker-EarnApp
 
 ## Overview
-A Dockerized setup for automating EarnApp Provider deployment. It fetches the latest release, extracts binaries, manages authentication via environment variables, and runs the provider app in the background. Includes essential system tools for network diagnostics, ensuring efficiency and error-resistant execution in a Debian-based container.
+A Dockerized setup for automating EarnApp deployment. It fetches the latest release, extracts binaries, manages authentication via environment variables, and runs the EarnApp app in the background. Includes essential system tools for network diagnostics, ensuring efficiency and error-resistant execution in a Debian-based container.
 
 
 ## Features  
