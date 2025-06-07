@@ -59,6 +59,7 @@ echo " "
 echo "### ### ### ### ### ### ###"
 echo " Download EarnApp binary "
 echo "### ### ### ### ### ### ###"
+echo " "
 wget --no-check-certificate --progress=bar:force:noscroll "https://cdn-earnapp.b-cdn.net/static/$filename" -O /usr/bin/earnapp
 echo " "
 
