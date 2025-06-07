@@ -21,7 +21,8 @@ echo " Starting custom.sh ... "
 echo "### ### ### ### ### ### ### ### ###"
 if [ -f "/custom.sh" ]; then
     echo "Running custom.sh..."
-    /custom.sh
+    chmod -R a+rwx /custom.sh
+    bash /custom.sh
 else
     echo "Skipping custom.sh as it is not present."
 fi
