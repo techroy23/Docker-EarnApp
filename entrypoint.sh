@@ -3,6 +3,7 @@
 echo "### ### ### ### ###"
 echo " Starting up ... "
 echo "### ### ### ### ###"
+echo " "
 
 if [[ -z "$EARNAPP_UUID" ]]; then
     echo " "
@@ -20,7 +21,6 @@ echo "### ### ### ### ### ### ### ### ###"
 echo " Starting custom.sh ... "
 echo "### ### ### ### ### ### ### ### ###"
 if [ -f "/custom.sh" ]; then
-    echo "Running custom.sh..."
     chmod -R a+rwx /custom.sh
     bash /custom.sh
 else
@@ -28,7 +28,6 @@ else
 fi
 echo " "
 
-echo " "
 GETINFO="
 ##### lsb_release #####
 $(lsb_release -a 2>/dev/null)
@@ -46,8 +45,9 @@ echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 wget -qO- https://brightdata.com/static/earnapp/install.sh > /app/setup.sh
 ARCH=$(uname -m)
 VERSION=$(grep VERSION= /app/setup.sh | cut -d'"' -f2)
+echo " "
 echo "Found version $VERSION"
-
+echo " "
 case $ARCH in
     x86_64|amd64) filename="earnapp-x64-$VERSION" ;;
     armv7l|armv6l) filename="earnapp-arm7l-$VERSION" ;;
@@ -65,6 +65,7 @@ echo " "
 echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
 echo " Setting up directory, status file, UUID and permissions ... "
 echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
+echo " "
 mkdir -p /etc/earnapp
 touch /etc/earnapp/status
 echo "$EARNAPP_UUID" > /etc/earnapp/uuid
