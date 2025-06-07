@@ -4,7 +4,6 @@ echo "### ### ### ### ###"
 echo " Starting up ... "
 echo "### ### ### ### ###"
 
-# Check if EARNAPP_UUID is set and not empty
 if [[ -z "$EARNAPP_UUID" ]]; then
     echo " "
     echo "Error: EARNAPP_UUID is missing or empty."
@@ -17,8 +16,19 @@ if [[ -z "$EARNAPP_UUID" ]]; then
     exit 255
 fi
 
+echo "### ### ### ### ### ### ### ### ###"
+echo " Starting custom.sh ... "
+echo "### ### ### ### ### ### ### ### ###"
+if [ -f "/custom.sh" ]; then
+    echo "Running custom.sh..."
+    /custom.sh
+else
+    echo "Skipping custom.sh as it is not present."
+fi
 echo " "
-INFO="
+
+echo " "
+GETINFO="
 ##### lsb_release #####
 $(lsb_release -a 2>/dev/null)
 
@@ -26,7 +36,7 @@ $(lsb_release -a 2>/dev/null)
 $(hostnamectl 2>/dev/null)
 "
 
-echo "$INFO"
+echo "$GETINFO"
 echo " "
 
 echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
