@@ -15,6 +15,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Notify Start on Telegram
+        run: |
+          TIMESTAMP=$(TZ=Asia/Manila date +"%Y-%m-%d %H:%M:%S %Z %z")
+          MESSAGE="🛠️ Build STARTED\n"
+          MESSAGE+="📦 Repository: ${{ github.repository }}\n"
+          MESSAGE+="🌱 Branch: ${{ github.ref }}\n"
+          MESSAGE+="🕒 Triggered at: ${TIMESTAMP}"
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d "text=${MESSAGE}"
+
       - name: Set Up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -27,19 +38,6 @@ jobs:
       - name: Log in to GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Notify on Telegram
-        run: |
-          TIMESTAMP=$(TZ=Asia/Manila date +"%Y-%m-%d %H:%M:%S %Z %z")
-          
-          MESSAGE="🚀 GitHub Action triggered%0A"
-          MESSAGE+="📦 Repository: ${{ github.repository }}%0A"
-          MESSAGE+="🌱 Branch: ${{ github.ref }}%0A"
-          MESSAGE+="🕒 Triggered at: ${TIMESTAMP}"
-          
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
-            -d "text=${MESSAGE}"
-
       - name: Build and Push for amd64 & arm64 (Buildx)
         run: |
           docker buildx build --builder multiarch-builder \
@@ -49,7 +47,30 @@ jobs:
       - name: Build and Push for arm/v7, arm/v6, aarch64 (QEMU)
         run: |
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
           docker buildx build --builder multiarch-builder \
-          --platform linux/arm/v7,linux/arm/v6,linux/aarch64 \
-          -t ghcr.io/${{ github.actor }}/docker-earnapp:qemu --push .
+          --platform linux/arm/v7,linux/arm/v6 \
+          -t ghcr.io/${{ github.actor }}/docker-earnapp:latest --push .
+
+      - name: Notify Success on Telegram
+        if: success()
+        run: |
+          TIMESTAMP=$(TZ=Asia/Manila date +"%Y-%m-%d %H:%M:%S %Z %z")
+          MESSAGE="✅ Build DONE\n"
+          MESSAGE+="📦 Repository: ${{ github.repository }}\n"
+          MESSAGE+="🌱 Branch: ${{ github.ref }}\n"
+          MESSAGE+="🕒 Completed at: ${TIMESTAMP}"
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d "text=${MESSAGE}"
+
+      - name: Notify Failure on Telegram
+        if: failure()
+        run: |
+          TIMESTAMP=$(TZ=Asia/Manila date +"%Y-%m-%d %H:%M:%S %Z %z")
+          MESSAGE="❌ Build ERROR\n"
+          MESSAGE+="📦 Repository: ${{ github.repository }}\n"
+          MESSAGE+="🌱 Branch: ${{ github.ref }}\n"
+          MESSAGE+="🕒 Failed at: ${TIMESTAMP}"
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d "text=${MESSAGE}"
