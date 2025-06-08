@@ -39,3 +39,10 @@ docker run -d --platform linux/arm/v7 \
   ghcr.io/techroy23/docker-earnapp:latest
 
 ```
+
+## Note
+```
+⚠ You must register it for earnings to be added to your account.
+⚠ Open the following URL in the browser:
+  https://earnapp.com/r/sdk-node-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
