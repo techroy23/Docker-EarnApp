@@ -1,7 +1,7 @@
 FROM debian:latest
 
 RUN apt-get update -y && apt-get install -y \
-    curl wget tar htop net-tools \
+    curl wget tar htop net-tools tcpdump \
     && apt-get autoclean -y && apt-get autoremove -y && apt-get autopurge -y && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY custom.sh /custom.sh
