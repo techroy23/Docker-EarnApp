@@ -40,11 +40,28 @@ echo "$GETINFO"
 echo " "
 
 echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
-echo " Downloading  EarnApp installation script to get the latest version of the binary ... "
+echo " Downloading EarnApp installation script to get the latest version of the binary ... "
 echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
+
 wget -qO- https://brightdata.com/static/earnapp/install.sh > /app/setup.sh
+if [[ $? -ne 0 ]]; then
+    echo "Error: Failed to download EarnApp installation script."
+    exit 1
+fi
+
 ARCH=$(uname -m)
 VERSION=$(grep VERSION= /app/setup.sh | cut -d'"' -f2)
+
+if [[ -z "$VERSION" ]]; then
+    echo "Error: VERSION could not be determined."
+    exit 1
+fi
+
+if [[ -z "$ARCH" ]]; then
+    echo "Error: ARCH could not be determined."
+    exit 1
+fi
+
 echo " "
 echo "Found version $VERSION"
 echo " "
@@ -61,6 +78,10 @@ echo " Download EarnApp binary "
 echo "### ### ### ### ### ### ###"
 echo " "
 wget --no-check-certificate --progress=bar:force:noscroll "https://cdn-earnapp.b-cdn.net/static/$filename" -O /usr/bin/earnapp
+if [[ $? -ne 0 ]]; then
+    echo "Error: Failed to download EarnApp binary."
+    exit 1
+fi
 echo " "
 
 echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
@@ -92,14 +113,6 @@ sleep 3
 echo "### ### ### ### ### ###"
 echo " Running Indefinitely "
 echo "### ### ### ### ### ###"
-
-# echo " "
-# echo "### ### ###"
-# echo " TCP DUMP "
-# echo "### ### ###"
-# tcpdump -l -i "$(ls /sys/class/net | grep -E '^eth[0-9]+|^ens')" -nn -q 'tcp and tcp[4:2] > 0 or udp and udp[4:2] > 0' &
-# tshark -i eth0 -Y "not ssh and frame.len > 1000" -T fields -e ip.src -e ip.dst -e frame.len &
-# echo " "
 
 tail -f /dev/null
 echo " "
