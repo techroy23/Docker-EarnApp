@@ -25,24 +25,16 @@ jobs:
             '{ "embeds": [{ "title": $title, "description": ($repo + "\n" + $branch + "\n" + $time) }] }')
           
           curl -s -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" -d "$JSON_PAYLOAD"
-
+      
       - name: Log in to GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      
-      - name: Set Up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Set Up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
-      - name: Create Buildx Builder
-        run: docker buildx create --use --name multiarch-builder
 
-      - name: Build and Push Multi-Arch Image
+      - name: Build and Push Image
         run: |
-          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker buildx build --builder multiarch-builder \
-          --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6 \
+          docker buildx build --platform linux/amd64 \
           -t ghcr.io/${{ github.actor }}/docker-earnapp:latest --push .
 
       - name: Notify Success on Discord
