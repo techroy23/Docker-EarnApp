@@ -42,10 +42,10 @@ echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 echo " Downloading EarnApp installation script to get the latest version of the binary ... "
 echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
 
-HTTP_STATUS=$(curl -s -o /app/setup.sh -w "%{http_code}" https://brightdata.com/static/earnapp/install.sh)
-if [[ "$HTTP_STATUS" -ne 200 ]]; then
-    echo "Error: Failed to download EarnApp installation script. HTTP Status Code: $HTTP_STATUS"
-    exit 255
+wget --verbose --output-document=/app/setup.sh https://brightdata.com/static/earnapp/install.sh
+if [[ $? -ne 0 ]]; then
+    echo "Error: Failed to download EarnApp installation script."
+    exit 1
 fi
 
 ARCH=$(uname -m)
@@ -53,12 +53,12 @@ VERSION=$(grep VERSION= /app/setup.sh | cut -d'"' -f2)
 
 if [[ -z "$VERSION" ]]; then
     echo "Error: VERSION could not be determined."
-    exit 255
+    exit 1
 fi
 
 if [[ -z "$ARCH" ]]; then
     echo "Error: ARCH could not be determined."
-    exit 255
+    exit 1
 fi
 
 echo "Found version $VERSION"
@@ -75,10 +75,10 @@ echo " Download EarnApp binary "
 echo "### ### ### ### ### ### ###"
 echo " "
 
-HTTP_STATUS=$(curl -s --progress-bar -o /usr/bin/earnapp -w "%{http_code}" "https://cdn-earnapp.b-cdn.net/static/$filename")
-if [[ "$HTTP_STATUS" -ne 200 ]]; then
-    echo "Error: Failed to download EarnApp binary. HTTP Status Code: $HTTP_STATUS"
-    exit 255
+wget --verbose --output-document=/usr/bin/earnapp "https://cdn-earnapp.b-cdn.net/static/$filename"
+if [[ $? -ne 0 ]]; then
+    echo "Error: Failed to download EarnApp binary."
+    exit 1
 fi
 
 echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
