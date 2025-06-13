@@ -6,12 +6,11 @@ echo "### ### ### ### ###"
 echo " "
 
 if [[ -z "$EARNAPP_UUID" ]]; then
-    echo " "
     echo "Error: EARNAPP_UUID is missing or empty."
     echo "Run the following command to generate one:"
     echo " "
     echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
-    echo " echo -n "sdk-node-" && head -c 1024 /dev/urandom | md5sum | tr -d ' -' "
+    echo ' echo -n "sdk-node-" && head -c 1024 /dev/urandom | md5sum | tr -d " -" '
     echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
     echo " "
     exit 255
@@ -43,10 +42,10 @@ echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ##
 echo " Downloading EarnApp installation script to get the latest version of the binary ... "
 echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
 
-wget -qO- https://brightdata.com/static/earnapp/install.sh > /app/setup.sh
-if [[ $? -ne 0 ]]; then
-    echo "Error: Failed to download EarnApp installation script."
-    exit 1
+HTTP_STATUS=$(curl -s -o /app/setup.sh -w "%{http_code}" https://brightdata.com/static/earnapp/install.sh)
+if [[ "$HTTP_STATUS" -ne 200 ]]; then
+    echo "Error: Failed to download EarnApp installation script. HTTP Status Code: $HTTP_STATUS"
+    exit 255
 fi
 
 ARCH=$(uname -m)
@@ -54,15 +53,14 @@ VERSION=$(grep VERSION= /app/setup.sh | cut -d'"' -f2)
 
 if [[ -z "$VERSION" ]]; then
     echo "Error: VERSION could not be determined."
-    exit 1
+    exit 255
 fi
 
 if [[ -z "$ARCH" ]]; then
     echo "Error: ARCH could not be determined."
-    exit 1
+    exit 255
 fi
 
-echo " "
 echo "Found version $VERSION"
 echo " "
 case $ARCH in
@@ -71,18 +69,17 @@ case $ARCH in
     aarch64|arm64) filename="earnapp-aarch64-$VERSION" ;;
     *) filename="$PRODUCT-arm7l-$VERSION" ;;  # Default fallback
 esac
-echo " "
 
 echo "### ### ### ### ### ### ###"
 echo " Download EarnApp binary "
 echo "### ### ### ### ### ### ###"
 echo " "
-wget --no-check-certificate --progress=bar:force:noscroll "https://cdn-earnapp.b-cdn.net/static/$filename" -O /usr/bin/earnapp
-if [[ $? -ne 0 ]]; then
-    echo "Error: Failed to download EarnApp binary."
-    exit 1
+
+HTTP_STATUS=$(curl -s --progress-bar -o /usr/bin/earnapp -w "%{http_code}" "https://cdn-earnapp.b-cdn.net/static/$filename")
+if [[ "$HTTP_STATUS" -ne 200 ]]; then
+    echo "Error: Failed to download EarnApp binary. HTTP Status Code: $HTTP_STATUS"
+    exit 255
 fi
-echo " "
 
 echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
 echo " Setting up directory, status file, UUID and permissions ... "
@@ -108,11 +105,8 @@ echo " "
 sleep 3
 /usr/bin/earnapp register
 
-echo " "
-sleep 3
 echo "### ### ### ### ### ###"
 echo " Running Indefinitely "
 echo "### ### ### ### ### ###"
 
 tail -f /dev/null
-echo " "
