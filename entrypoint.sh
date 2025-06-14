@@ -34,6 +34,16 @@ if [ -f "/custom.sh" ]; then
     echo " "
 else
     echo "Skipping custom.sh as it is not present."
+    GETINFO="
+    ##### lsb_release #####
+    $(lsb_release -a 2>/dev/null)
+
+    ##### hostnamectl #####
+    $(hostnamectl 2>/dev/null)
+    "
+
+    echo "$GETINFO"
+    echo " "
 fi
 echo " "
 
