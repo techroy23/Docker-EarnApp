@@ -52,6 +52,11 @@ echo "### ### ### ### ### ### ### ### ### ### ### ###"
 echo " Start EarnApp service and register instance "
 echo "### ### ### ### ### ### ### ### ### ### ### ###"
 echo " "
+echo | md5sum /usr/bin/earnapp
+echo " "
+sleep 3
+/usr/bin/earnapp stop
+echo " "
 sleep 3
 /usr/bin/earnapp start
 echo " "

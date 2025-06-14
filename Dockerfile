@@ -1,4 +1,7 @@
-FROM debian:latest
+# FROM debian:latest
+# FROM ubuntu:latest
+
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -23,5 +26,7 @@ RUN bash /custom.sh
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+VOLUME [ "/etc/earnapp" ]
 
 ENTRYPOINT ["/entrypoint.sh"]
