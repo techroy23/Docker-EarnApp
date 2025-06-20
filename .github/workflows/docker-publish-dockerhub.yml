@@ -77,10 +77,8 @@ jobs:
           git config --global user.name "techroy23"
           git add last_version.txt
           git commit -m "Update last_version.txt to ${{ env.VERSION }} [skip ci]"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }}
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/techroy23/Docker-EarnApp
           git push origin HEAD:${{ github.ref }}
-          echo "Repository: $GITHUB_REPOSITORY"
-          echo "Ref: $GITHUB_REF"
 
       - name: Notify Build Success on Discord
         if: env.SKIP_BUILD == 'false'
