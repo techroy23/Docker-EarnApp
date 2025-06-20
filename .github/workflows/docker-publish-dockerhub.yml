@@ -53,6 +53,7 @@ jobs:
           echo "LAST_VERSION=$LAST_VERSION" >> $GITHUB_ENV
           if [ "$LAST_VERSION" = "$VERSION" ]; then
             echo "SKIP_BUILD=true" >> $GITHUB_ENV
+            echo "Found current version: $VERSION"
             echo "No new version detected. Build and push will be skipped."
           else
             echo "SKIP_BUILD=false" >> $GITHUB_ENV
