@@ -76,7 +76,7 @@ jobs:
           git config --global user.name "GitHub Actions"
           git add last_version.txt
           git commit -m "Update last_version.txt to ${{ env.VERSION }} [skip ci]"
-          git push https://x-access-token:${{ secrets.GHCR_TOKEN }}@github.com/${{ github.repository }} HEAD:${{ github.ref }}
+          git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/${{ github.repository }} HEAD:${{ github.ref }}
 
       - name: Notify Build Success on Discord
         if: env.SKIP_BUILD == 'false'
