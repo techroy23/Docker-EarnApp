@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
 RUN apt update -y && \
-    apt install -y wget tar htop net-tools && \
+    apt install -y wget tar htop net-tools curl && \
 	apt autoclean && \
 	apt autoremove -y && \
 	rm -rf /var/lib/apt/lists/* && \
