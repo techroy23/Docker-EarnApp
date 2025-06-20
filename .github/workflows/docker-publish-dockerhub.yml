@@ -71,7 +71,10 @@ jobs:
       - name: Update last_version.txt if new version detected
         if: env.SKIP_BUILD == 'false'
         run: |
-          echo "Actor: $GH_PAT"
+          echo "123: ${{ secrets.GH_PAT }}"
+          echo "456: ${{ secrets.GITHUB_TOKEN }}"
+          echo "789: ${{ github.ref }}"
+          echo "000: ${{ env.VERSION }}"
           echo "${{ env.VERSION }}" > last_version.txt
           git config --global user.email "villamor.leroy@gmail.com"
           git config --global user.name "techroy23"
