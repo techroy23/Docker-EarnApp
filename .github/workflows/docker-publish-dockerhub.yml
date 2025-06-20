@@ -71,16 +71,12 @@ jobs:
       - name: Update last_version.txt if new version detected
         if: env.SKIP_BUILD == 'false'
         run: |
-          echo "123: ${{ secrets.GH_PAT }}"
-          echo "456: ${{ secrets.GITHUB_TOKEN }}"
-          echo "789: ${{ github.ref }}"
-          echo "000: ${{ env.VERSION }}"
           echo "${{ env.VERSION }}" > last_version.txt
           git config --global user.email "villamor.leroy@gmail.com"
           git config --global user.name "techroy23"
           git add last_version.txt
           git commit -m "Update last_version.txt to ${{ env.VERSION }} [skip ci]"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/techroy23/Docker-EarnApp
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/techroy23/Docker-EarnApp
           git push origin HEAD:${{ github.ref }}
 
       - name: Notify Build Success on Discord
