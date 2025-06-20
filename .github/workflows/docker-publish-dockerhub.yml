@@ -1,0 +1,110 @@
+name: Build and Push Docker Image to Docker Hub
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  build-dockerhub:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Notify Start on Discord
+        run: |
+          TIMESTAMP=$(TZ=Asia/Manila date +"%Y-%m-%d %H:%M:%S %Z %z")
+          JSON_PAYLOAD=$(jq -n --arg title "🛠️ Build Started (dockerhub)" \
+            --arg repo "**📦 Repository:** ${{ github.repository }}" \
+            --arg branch "**🌱 Branch:** ${{ github.ref }}" \
+            --arg time "**🕒 Triggered at:** ${TIMESTAMP}" \
+            '{ "embeds": [{ "title": $title, "description": ($repo + "\n" + $branch + "\n" + $time) }] }')
+          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" -d "$JSON_PAYLOAD"
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
+
+      - name: Set Up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Get version tag from EarnApp installer
+        id: get_version
+        run: |
+          VERSION=$(wget -qO- https://brightdata.com/static/earnapp/install.sh | grep VERSION= | cut -d '"' -f 2)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Current version from installer: $VERSION"
+
+      - name: Compare with last known version
+        id: compare_version
+        run: |
+          if [ -f last_version.txt ]; then
+            LAST_VERSION=$(cat last_version.txt)
+            echo "Found last version: $LAST_VERSION"
+          else
+            LAST_VERSION=""
+            echo "No previous version found."
+          fi
+          echo "LAST_VERSION=$LAST_VERSION" >> $GITHUB_ENV
+          if [ "$LAST_VERSION" = "$VERSION" ]; then
+            echo "SKIP_BUILD=true" >> $GITHUB_ENV
+            echo "No new version detected. Build and push will be skipped."
+          else
+            echo "SKIP_BUILD=false" >> $GITHUB_ENV
+            echo "New version detected: $VERSION (last was: $LAST_VERSION). Will proceed with build and push."
+          fi
+
+      - name: Build and push image to Docker Hub
+        if: env.SKIP_BUILD == 'false'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            docker.io/techroy23/docker-earnapp:latest
+            docker.io/techroy23/docker-earnapp:${{ env.VERSION }}
+
+      - name: Update last_version.txt if new version detected
+        if: env.SKIP_BUILD == 'false'
+        run: |
+          echo "${{ env.VERSION }}" > last_version.txt
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add last_version.txt
+          git commit -m "Update last_version.txt to ${{ env.VERSION }} [skip ci]"
+          git push origin HEAD:${{ github.ref }}
+
+      - name: Notify Build Success on Discord
+        if: env.SKIP_BUILD == 'false'
+        run: |
+          TIMESTAMP=$(TZ=Asia/Manila date +"%Y-%m-%d %H:%M:%S %Z %z")
+          JSON_PAYLOAD=$(jq -n --arg title "✅ Build Done (dockerhub)" \
+            --arg repo "**📦 Repository:** ${{ github.repository }}" \
+            --arg branch "**🌱 Branch:** ${{ github.ref }}" \
+            --arg time "**🕒 Completed at:** ${TIMESTAMP}" \
+            '{ "embeds": [{ "title": $title, "description": ($repo + "\n" + $branch + "\n" + $time) }] }')
+          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" -d "$JSON_PAYLOAD"
+
+      - name: Notify Skipped on Discord
+        if: env.SKIP_BUILD == 'true'
+        run: |
+          TIMESTAMP=$(TZ=Asia/Manila date +"%Y-%m-%d %H:%M:%S %Z %z")
+          JSON_PAYLOAD=$(jq -n --arg title "ℹ️ Build Skipped" \
+            --arg message "No new version detected. Skipping build and push." \
+            '{ "embeds": [{ "title": $title, "description": $message }] }')
+          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" -d "$JSON_PAYLOAD"
+
+      - name: Notify Failure on Discord
+        if: failure()
+        run: |
+          TIMESTAMP=$(TZ=Asia/Manila date +"%Y-%m-%d %H:%M:%S %Z %z")
+          JSON_PAYLOAD=$(jq -n --arg title "❌ Build Error (dockerhub)" \
+            --arg repo "**📦 Repository:** ${{ github.repository }}" \
+            --arg branch "**🌱 Branch:** ${{ github.ref }}" \
+            --arg time "**🕒 Failed at:** ${TIMESTAMP}" \
+            '{ "embeds": [{ "title": $title, "description": ($repo + "\n" + $branch + "\n" + $time) }] }')
+          curl -s -X POST "${{ secrets.DISCORD_WEBHOOK_URL }}" -H "Content-Type: application/json" -d "$JSON_PAYLOAD"
