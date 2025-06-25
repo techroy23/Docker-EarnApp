@@ -49,6 +49,8 @@ echo " Start EarnApp service and register instance "
 echo "### ### ### ### ### ### ### ### ### ### ### ###"
 echo " "
 sleep 5
+earnapp stop &
+sleep 5
 earnapp start &
 sleep 5
 earnapp register &
