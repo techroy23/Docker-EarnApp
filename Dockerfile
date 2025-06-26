@@ -20,12 +20,6 @@ RUN wget -cq "https://brightdata.com/static/earnapp/install.sh" --output-documen
     echo | md5sum /usr/bin/earnapp && \
     chmod a+x /usr/bin/earnapp
 
-COPY healthcheck.sh /healthcheck.sh
-RUN chmod +x /healthcheck.sh
-
-HEALTHCHECK --interval=1m --timeout=10s --start-period=5s --retries=5 \
-    CMD /healthcheck.sh
-
 COPY custom.sh /custom.sh
 RUN bash /custom.sh
 
