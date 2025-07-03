@@ -23,8 +23,10 @@ RUN wget -cq "https://brightdata.com/static/earnapp/install.sh" --output-documen
 # COPY custom.sh /custom.sh
 # RUN bash /custom.sh
 
-RUN echo -e "#\!/bin/bash \n echo \"$(lsb_release -a)\"" > /usr/bin/lsb_release
-RUN echo -e "#\!/bin/bash \n echo \"$(hostnamectl)\"" > /usr/bin/hostnamectl
+RUN printf '#!/bin/bash \n echo "%s"' "$(lsb_release -a)" > /usr/bin/lsb_release && \
+    printf '#!/bin/bash \n echo "%s"' "$(hostnamectl)" > /usr/bin/hostnamectl && \
+    printf '#!/bin/bash \n echo "%s"' "$(systemctl)" > /usr/bin/systemctl && \
+    chmod a+x /usr/bin/install /usr/bin/hostnamectl /usr/bin/lsb_release /usr/bin/systemctl
 
 COPY _start.sh /_start.sh
 RUN chmod a+x /_start.sh
