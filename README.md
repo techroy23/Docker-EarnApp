@@ -18,12 +18,12 @@ A Dockerized setup for automating EarnApp deployment. It fetches the latest rele
 ```bash
 
 # Option 1 : FROM [GHCR]
-docker run -d earnApp-xx \
+docker run -d --name=earnApp-xx \
   -e EARNAPP_UUID="sdk-node-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   ghcr.io/techroy23/docker-earnapp:latest
 
 # Option 2 : FROM [DOCKER HUB]
-docker run -d earnApp-xx \
+docker run -d --name=earnApp-xx \
   -e EARNAPP_UUID="sdk-node-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
   techroy23/docker-earnapp
 
