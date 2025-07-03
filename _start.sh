@@ -18,19 +18,19 @@ if [[ -z "$EARNAPP_UUID" ]]; then
     exit 255
 fi
 
-echo " "
-echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
-echo " Setting up lsb_release and hostnamectl ... "
-echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
-bash /custom.sh 
-echo " "
-echo "Container Info:"
-echo " "
-echo "lsb_release"
-/usr/bin/lsb_release
-echo " "
-echo "hostnamectl"
-/usr/bin/hostnamectl
+# echo " "
+# echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
+# echo " Setting up lsb_release and hostnamectl ... "
+# echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"
+# bash /custom.sh 
+# echo " "
+# echo "Container Info:"
+# echo " "
+# echo "lsb_release"
+# /usr/bin/lsb_release
+# echo " "
+# echo "hostnamectl"
+# /usr/bin/hostnamectl
 
 echo " "
 echo "### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###"

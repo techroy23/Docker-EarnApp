@@ -20,8 +20,11 @@ RUN wget -cq "https://brightdata.com/static/earnapp/install.sh" --output-documen
     echo | md5sum /usr/bin/earnapp && \
     chmod a+x /usr/bin/earnapp
 
-COPY custom.sh /custom.sh
-RUN bash /custom.sh
+# COPY custom.sh /custom.sh
+# RUN bash /custom.sh
+
+RUN echo -e "#\!/bin/bash \n echo \"$(lsb_release -a)\"" > /usr/bin/lsb_release
+RUN echo -e "#\!/bin/bash \n echo \"$(hostnamectl)\"" > /usr/bin/hostnamectl
 
 COPY _start.sh /_start.sh
 RUN chmod a+x /_start.sh
